@@ -188,7 +188,7 @@ export default function HomePage() {
   return (
     <div className=" min-h-screen ">
       {/* Hero Section */}
-      <section className="relative  overflow-hidden py-24 md:py-32 min-h-[80vh">
+      <section className="relative  overflow-hidden py-24 md:py-32 min-h-[80vh]">
         <div className="absolute" />
         <div className="absolute inset-0 bg-cover bg-center  " style={{ backgroundImage: "url('/images/home.png')" }} />
 

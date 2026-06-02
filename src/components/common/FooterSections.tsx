@@ -96,13 +96,13 @@ export default function FooterSections() {
   return (
     <div className="bg-[#050f24] text-gray-400 text-sm border-b border-gray-800">
       <div className="container mx-auto px-4 md:px-8 max-w-5xl py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6 md:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 md:gap-4">
           {footerSections.map((section) => (
             <div key={section.title} className="space-y-4">
-              <h4 className="text-white font-semibold tracking-wide border-b border-gray-800 pb-2">
+              <h4 className="text-white font-semibold text-[20px] tracking-wide border-b border-gray-800 pb-2">
                 {section.title}
               </h4>
-              <ul className="space-y-2 text-[11px] leading-tight">
+              <ul className="space-y-2 text-[18px] leading-tight">
                 {section.links.map((link) => (
                   <li key={link.label}>
                     <Link href={link.href} className="hover:text-[#00d66d] transition-colors">

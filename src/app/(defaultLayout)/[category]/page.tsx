@@ -281,7 +281,7 @@ export default function DynamicCategoryPage({
   return (
     <div className="  ">
       {/* Hero Section */}
-      <section className="relative min-h-[40vh] bg-[#0b1b3d] text-white overflow-hidden flex justify-center items-center">
+      <section className="relative min-h-[80vh] bg-[#0b1b3d] text-white overflow-hidden flex justify-center items-center">
         <div className="absolute inset-0 " />
         <div
           className="absolute inset-0 bg-cover bg-center "
