@@ -83,7 +83,7 @@ export default function AboutPage() {
           priority
           className="object-cover opacity-25"
         />
-        <div className="relative z-10 container mx-auto px-4 md:px-8 max-w-5xl space-y-5">
+        <div className="relative z-10 container mx-auto px-4 md:px-8 space-y-5">
           <div className="inline-flex items-center gap-2 bg-[#00d66d]/10 border border-[#00d66d]/20 text-[#00d66d] text-xs font-bold px-4 py-1.5 rounded-full">
             <Building2 size={14} /> Our Story
           </div>
@@ -104,7 +104,7 @@ export default function AboutPage() {
 
       {/* Stats Bar */}
       <section className="bg-white border-y border-gray-100 shadow-sm">
-        <div className="container mx-auto px-4 max-w-5xl py-10">
+        <div className="container mx-auto px-4  py-10">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
             {stats.map((s, idx) => (
               <div key={idx} className="space-y-2">
@@ -122,7 +122,7 @@ export default function AboutPage() {
       </section>
 
       {/* Mission */}
-      <section className="container mx-auto px-4 md:px-8 max-w-5xl py-20">
+      <section className="container mx-auto px-4 md:px-8 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
           <div className="space-y-5">
             <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-600 text-xs font-bold px-4 py-1.5 rounded-full">
@@ -164,7 +164,7 @@ export default function AboutPage() {
 
       {/* Core Values */}
       <section className="bg-white border-y border-gray-100 py-20">
-        <div className="container mx-auto px-4 md:px-8 max-w-5xl">
+        <div className="container mx-auto px-4 md:px-8 ">
           <div className="text-center mb-12 space-y-2">
             <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-600 text-xs font-bold px-4 py-1.5 rounded-full">
               <Star size={14} /> What We Stand For
@@ -189,7 +189,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team */}
-      <section className="container mx-auto px-4 md:px-8 max-w-5xl py-20">
+      <section className="container mx-auto px-4 md:px-8  py-20">
         <div className="text-center mb-12 space-y-2">
           <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-600 text-xs font-bold px-4 py-1.5 rounded-full">
             <Users size={14} /> Meet the Team

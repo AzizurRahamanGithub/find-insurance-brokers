@@ -12,7 +12,7 @@ export default function Footer() {
        <FooterSections />
       {/* Middle Brand and About */}
       <div className="border border-gray-700">
-        <div className="container mx-auto px-4 md:px-8 max-w-5xl py-12">
+        <div className="container mx-auto px-4 md:px-8  py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
             {/* Left side: Logo & Badges */}
             <div className="space-y-6">
@@ -56,7 +56,8 @@ export default function Footer() {
             </div>
 
             {/* Right side: Navigation Links, Description, Socials */}
-            <div className="space-y-6 lg:text-right">
+            <div className="flex flex-col items-end">
+              <div className="flex flex-col space-y-6 lg:text-right">
               {/* Navigation links */}
               <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-300 font-semibold lg:justify-start">
                 <Link href="#" className="hover:text-[#00d66d]">About Us</Link>
@@ -91,6 +92,7 @@ export default function Footer() {
                   <Linkedin size={16} />
                 </Link>
               </div>
+              </div>
             </div>
           </div>
           <p className="leading-relaxed text-justify mt-8">
@@ -102,7 +104,7 @@ export default function Footer() {
         </div>
       </div>
       {/* Bottom Legal & Disclaimer */}
-      <div className="container mx-auto px-4 md:px-8 max-w-5xl py-8 text-xs text-gray-400 space-y-6">
+      <div className="container mx-auto px-4 md:px-8  py-8 text-xs text-gray-400 space-y-6">
         
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-900">

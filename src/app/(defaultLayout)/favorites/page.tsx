@@ -59,7 +59,7 @@ export default function FavoritesPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-50 py-16">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-4 ">
           <div className="h-10 w-64 bg-slate-200 rounded-xl animate-pulse mb-10" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (

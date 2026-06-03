@@ -495,7 +495,7 @@ export default function PropertyDetailPage() {
           >
             <X size={24} />
           </button>
-          <div className="relative w-full max-w-5xl h-[80vh] px-16" onClick={(e) => e.stopPropagation()}>
+          <div className="relative w-full  h-[80vh] px-16" onClick={(e) => e.stopPropagation()}>
             <Image src={images[activeImage]} alt="" fill className="object-contain" />
             <button onClick={prevImage} className="absolute left-0 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition">
               <ChevronLeft size={28} />

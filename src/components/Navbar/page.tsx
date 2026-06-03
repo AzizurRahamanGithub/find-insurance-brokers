@@ -24,14 +24,14 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
-      <div className="container mx-auto max-w-5xl py-2 flex justify-between items-center">
+      <div className="container mx-auto  py-2 px-5 flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1.5">
           <div className="">
              <Image
                   src="/images/logo.png"
                   alt="Logo"
-                  width={250}
+                  width={200}
                   height={100}
                 />
 

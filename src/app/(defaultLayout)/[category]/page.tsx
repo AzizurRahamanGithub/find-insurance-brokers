@@ -288,7 +288,7 @@ export default function DynamicCategoryPage({
           style={{ backgroundImage: `url('${categoryInfo.heroImage}')` }}
         />
 
-        <div className="container mx-auto px-4 md:px-8 relative z-10 max-w-5xl">
+        <div className="container mx-auto px-4 md:px-8 relative z-10 ">
           <div className="space-y-4">
             {/* Breadcrumb */}
             <div className="flex items-center gap-1.5 text-xs text-gray-400 font-semibold mb-2">
@@ -322,7 +322,7 @@ export default function DynamicCategoryPage({
 
       {/* Main Grid: Filters + List */}
       <section className="py-12">
-        <div className="container mx-auto px-4 md:px-8 max-w-5xl">
+        <div className="container mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Sidebar Filters */}
             <div className="lg:col-span-1">

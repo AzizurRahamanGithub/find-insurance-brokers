@@ -49,7 +49,7 @@ export default function ContactPage() {
 
   return (
     <div className="bg-[#f8fafc] min-h-screen text-[#0f265c] py-20">
-      <div className="container mx-auto px-4 md:px-8 max-w-5xl space-y-12">
+      <div className="container mx-auto px-4 md:px-8  space-y-12">
         {/* Header */}
         <div className="text-center space-y-4 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 bg-[#00d66d]/10 text-[#00d66d] text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-full">
