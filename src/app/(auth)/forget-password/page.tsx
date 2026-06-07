@@ -1,25 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Building2 } from "lucide-react";
 import {
   useForgotPasswordMutation,
   useResetEmailVerifyMutation,
-  useVerifyOtpMutation,
 } from "@/redux/api/authApi";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-// import { useStep } from "usehooks-ts";
 import { useMemo, useState } from "react";
 
 
 type ForgotFormValues = {
   email: string;
-  otp?: string; // ✅ optional so TS knows it may exist
+  otp?: string;
 };
+
+type Step = "SEND" | "VERIFY";
+
 // ✅ 1) Zod schema: rules এখানে define হবে
 const emailOnlySchema = z.object({
   email: z
@@ -46,7 +47,7 @@ type Step = "SEND" | "VERIFY";
 
 export default function ForgetPasswordPage() {
   const router = useRouter();
-  const [step, setStep] = useState("SEND");
+  const [step, setStep] = useState<Step>("SEND");
   const schema = useMemo(
     () => (step === "SEND" ? emailOnlySchema : emailOtpSchema),
     [step],
@@ -100,8 +101,12 @@ export default function ForgetPasswordPage() {
         // token না থাকলে simple redirect
         router.push("/reset-password");
       }
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Something went wrong");
+    } catch (err: unknown) {
+      const message =
+        typeof err === "object" && err !== null && "data" in err
+          ? (err as any)?.data?.message
+          : undefined;
+      toast.error(message || "Something went wrong");
     }
   };
   const loading = isSubmitting || isSending || isVerifying;

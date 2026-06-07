@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginMutation } from "@/redux/api/authApi";
@@ -10,6 +10,11 @@ import { setRefreshToken, setUser } from "@/redux/features/authSlice";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Building2 } from "lucide-react";
+
+type LoginFormValues = {
+  email: string;
+  password: string;
+};
 
 // ✅ 1) Zod schema: rules এখানে define হবে
 const loginSchema = z.object({
@@ -30,7 +35,7 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -38,17 +43,17 @@ export default function LoginPage() {
     },
   });
 
-  const [loginUser, { isLoading }] = useLoginMutation();
+  const [loginUser] = useLoginMutation();
   const dispatch = useDispatch();
   const router = useRouter();
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
-  const onSubmit = async (data: FieldValues) => {
+  const onSubmit = async (data: LoginFormValues) => {
     const payload = {
-      identifier: String(data.email).trim(),
-      password: String(data.password),
+      identifier: data.email.trim(),
+      password: data.password,
     };
     console.log("payload", payload);
 

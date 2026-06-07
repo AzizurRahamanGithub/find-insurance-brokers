@@ -20,7 +20,8 @@ export default function Navbar() {
     { label: "Financial", href: "/financial" },
   ];
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) =>
+    pathname === href || pathname?.startsWith(`${href}/`);
 
   return (
     <nav className="w-full bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">

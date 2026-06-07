@@ -8,6 +8,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import type { Control, UseFormSetValue } from "react-hook-form";
+import type { RegisterFormData } from "@/validation/auth.validation";
 
 export default function TermsDialog({
   open,
@@ -17,8 +19,8 @@ export default function TermsDialog({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  control?: any;
-  setValue?: any;
+  control?: Control<RegisterFormData>;
+  setValue?: UseFormSetValue<RegisterFormData>;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

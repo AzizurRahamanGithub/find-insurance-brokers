@@ -9,7 +9,7 @@ import { FieldGroup, FieldSet, FieldSeparator } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { FormInput } from "../form/FormInput";
 import { Separator } from "../ui/separator";
-import { loginSchema } from "@/validation/auth.validation";
+import { loginSchema, type LoginFormData } from "@/validation/auth.validation";
 
 import Link from "next/link";
 import { useLoginMutation } from "@/redux/api/authApi";
@@ -27,7 +27,7 @@ export default function LoginForm() {
   const [loginUser, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
 
-  const methods = useForm({
+  const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       identifier: "",
@@ -35,7 +35,7 @@ export default function LoginForm() {
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: LoginFormData) => {
     try {
       const res = await loginUser(data).unwrap();
 
@@ -47,9 +47,9 @@ export default function LoginForm() {
       const apiError = error?.data;
 
       if (apiError?.error) {
-        Object.values(apiError.error).forEach((messages: any) => {
+        Object.values(apiError.error).forEach((messages) => {
           if (Array.isArray(messages)) {
-            messages.forEach((msg) => toast.error(msg));
+            messages.forEach((msg) => toast.error(String(msg)));
           }
         });
         return;

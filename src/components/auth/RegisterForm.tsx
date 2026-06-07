@@ -12,7 +12,7 @@ import { FormInput } from "@/components/form/FormInput";
 import { FormSelect } from "@/components/form/FormSelect";
 import FormFileInput from "@/components/form/FormFileInput";
 
-import { registerSchema } from "@/validation/auth.validation";
+import { registerSchema, type RegisterFormData } from "@/validation/auth.validation";
 import { useRegisterMutation } from "@/redux/api/authApi";
 import Link from "next/link";
 import TermsDialog from "./TermsDialog";
@@ -25,7 +25,7 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const methods = useForm({
+  const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       full_name: "",
@@ -37,13 +37,13 @@ export default function RegisterForm() {
       id_with_image: [],
       password: "",
       confirm_password: "",
-      isAgree: false, 
+      isAgree: false,
     },
   });
 
   const { handleSubmit, reset, control, setValue } = methods;
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: RegisterFormData) => {
     try {
       const { confirm_password, ...payload } = data;
       console.log("payload", payload);

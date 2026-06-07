@@ -588,6 +588,5 @@ export default function DynamicCategoryPage({
           </div>
         </div>
       )}
-    </div>
-  );
-}
+</div>
+  )}

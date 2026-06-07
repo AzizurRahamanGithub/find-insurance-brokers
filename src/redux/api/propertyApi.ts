@@ -1,17 +1,36 @@
 import { baseApi } from "./baseApi";
-import { PropertyData, LocationData, AmenityData } from "../../../types";
+import { PropertyData, SubCategoryData, PaginationData } from "../../types";
+
+type PropertiesResponse = {
+  success: boolean;
+  data: { results: PropertyData[]; pagination: PaginationData };
+};
+
+type SubCategoriesResponse = {
+  success: boolean;
+  data: { results: SubCategoryData[]; pagination: PaginationData };
+};
+
+type PropertyResponse = {
+  success: boolean;
+  data: PropertyData;
+};
+
+type QueryParams = Record<string, string | number | boolean | undefined>;
 
 export const propertyApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getProperties: builder.query<{ success: boolean; data: { results: PropertyData[]; count: number; next: string | null; previous: string | null } | PropertyData[] }, Record<string, string | number | boolean | undefined>>({
+    getProperties: builder.query<PropertiesResponse, QueryParams>({
       query: (params) => {
-        const cleanParams = Object.entries(params).reduce((acc, [key, value]) => {
-          if (value !== undefined && value !== "") {
-            acc[key] = String(value);
-          }
-          return acc;
-        }, {} as Record<string, string>);
-
+        const cleanParams = Object.entries(params).reduce(
+          (acc, [key, value]) => {
+            if (value !== undefined && value !== "") {
+              acc[key] = String(value);
+            }
+            return acc;
+          },
+          {} as Record<string, string>
+        );
         return {
           url: "/properties/",
           method: "GET",
@@ -20,8 +39,8 @@ export const propertyApi = baseApi.injectEndpoints({
       },
       providesTags: ["Property"],
     }),
-    
-    getProperty: builder.query<{ success: boolean; data: PropertyData }, number | string>({
+
+    getProperty: builder.query<PropertyResponse, number | string>({
       query: (id) => ({
         url: `/properties/${id}/`,
         method: "GET",
@@ -29,53 +48,12 @@ export const propertyApi = baseApi.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Property" as const, id }],
     }),
 
-    getLocations: builder.query<{ success: boolean; data: LocationData[] }, void>({
+    getSubCategories: builder.query<SubCategoriesResponse, void>({
       query: () => ({
-        url: "/properties/locations/",
+        url: "/properties/subcategories/",
         method: "GET",
       }),
-      providesTags: ["Location"],
-    }),
-
-    getAmenities: builder.query<{ success: boolean; data: AmenityData[] }, void>({
-      query: () => ({
-        url: "/properties/amenities/",
-        method: "GET",
-      }),
-      providesTags: ["Amenity"],
-    }),
-
-    getFavorites: builder.query<{ success: boolean; data: any[] }, void>({
-      query: () => ({
-        url: "/properties/favorites/",
-        method: "GET",
-      }),
-      providesTags: ["Favorite"],
-    }),
-
-    addFavorite: builder.mutation<{ success: boolean; data: any }, { property: number }>({
-      query: (body) => ({
-        url: "/properties/favorites/",
-        method: "POST",
-        body,
-      }),
-      invalidatesTags: ["Favorite", "Property"],
-    }),
-
-    removeFavorite: builder.mutation<{ success: boolean; message: string }, number>({
-      query: (propertyId) => ({
-        url: `/properties/favorites/${propertyId}/`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["Favorite", "Property"],
-    }),
-
-    createInquiry: builder.mutation<{ success: boolean; message: string; data: any }, { property_id: number; name: string; email: string; phone?: string; message: string }>({
-      query: ({ property_id, ...body }) => ({
-        url: `/properties/${property_id}/inquiry/`,
-        method: "POST",
-        body,
-      }),
+      providesTags: ["SubCategory"],
     }),
   }),
 });
@@ -83,10 +61,5 @@ export const propertyApi = baseApi.injectEndpoints({
 export const {
   useGetPropertiesQuery,
   useGetPropertyQuery,
-  useGetLocationsQuery,
-  useGetAmenitiesQuery,
-  useGetFavoritesQuery,
-  useAddFavoriteMutation,
-  useRemoveFavoriteMutation,
-  useCreateInquiryMutation,
+  useGetSubCategoriesQuery,
 } = propertyApi;

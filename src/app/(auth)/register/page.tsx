@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import { z } from "zod";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useRegisterMutation } from "@/redux/api/authApi";
-import { useDispatch } from "react-redux";
 import { Building2 } from "lucide-react";
+import { RegisterFormData } from "@/validation/auth.validation";
 
 const registerSchema = z
   .object({
@@ -36,10 +36,8 @@ export default function SignupPage() {
   const {
     register,
     handleSubmit,
-    setError,
-    watch,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       full_name: "",
@@ -51,7 +49,7 @@ export default function SignupPage() {
 
   const [registerUser, { isLoading }] = useRegisterMutation();
 
-  const onSubmit = async (data: FieldValues) => {
+  const onSubmit = async (data: RegisterFormData) => {
     const toastId = toast.loading("Registering...");
 
     try {
