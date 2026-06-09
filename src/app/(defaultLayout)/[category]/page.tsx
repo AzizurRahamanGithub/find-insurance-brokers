@@ -14,6 +14,9 @@ import {
   ExternalLink,
   CheckCircle,
 } from "lucide-react";
+import { useGetPropertiesQuery, useGetSubCategoriesQuery } from "@/redux/api/propertyApi";
+import { PropertyData, SubCategoryData } from "@/types";
+import Image from "next/image";
 
 interface CategoryData {
   title: string;
@@ -167,60 +170,16 @@ const CATEGORY_MAP: Record<string, CategoryData> = {
   },
 };
 
-const BROKERS_POOL = [
-  {
-    name: "Admiral",
-    rating: 4.8,
-    reviewsCount: 2456,
-    fcaNumber: "202153",
-    logoBg: "bg-blue-900 text-white font-black italic",
-    logoSub: "MULTI-CAR INSURANCE",
-    offered: "Third Party Fire & Theft and Comprehensive Cover",
-    discount: "Available on 2+ cars",
-    discountIcon: <Shield className="w-4 h-4 text-emerald-500 mr-1 inline" />,
-    benefit: "Save up to £280* on your policy",
-    url: "https://www.admiral.com",
-  },
-  {
-    name: "Tempcover",
-    rating: 4.7,
-    reviewsCount: 1892,
-    fcaNumber: "309855",
-    logoBg: "bg-red-50 text-red-600 font-extrabold tracking-widest",
-    logoSub: "TEMPORARY COVER",
-    offered: "Instant cover from 1 hour to 30 days for cars, vans and more.",
-    discount: "Policy in minutes",
-    discountIcon: <Zap className="w-4 h-4 text-amber-500 mr-1 inline" />,
-    benefit: "Drivers aged 18 - 78",
-    url: "https://www.tempcover.com",
-  },
-  {
-    name: "Fair",
-    rating: 4.5,
-    reviewsCount: 742,
-    fcaNumber: "419822",
-    logoBg: "bg-blue-800 text-white font-bold",
-    logoSub: "INVESTMENT",
-    offered: "Flexible learner driver insurance for 1-90 days of practice.",
-    discount: "No impact on NCB",
-    discountIcon: <GraduationCap className="w-4 h-4 text-blue-500 mr-1 inline" />,
-    benefit: "Drivers aged 17 - 22",
-    url: "https://www.wearefair.co.uk",
-  },
-  {
-    name: "Avova Insurance",
-    rating: 4.9,
-    reviewsCount: 3120,
-    fcaNumber: "512039",
-    logoBg: "bg-indigo-900 text-white font-extrabold italic",
-    logoSub: "AVOVA PREMIUM",
-    offered: "All-inclusive premium coverage options with 24/7 UK helpline support.",
-    discount: "Zero excess options",
-    discountIcon: <Shield className="w-4 h-4 text-indigo-500 mr-1 inline" />,
-    benefit: "FCA fully regulated protection",
-    url: "https://www.avovainsurance.co.uk",
-  },
-];
+const PROPERTY_TYPE_MAPPING: Record<string, string> = {
+  motor: "Moto",
+  home: "Home",
+  "life-health": "Life & Health",
+  travel: "Travel",
+  pet: "Pet",
+  business: "Business",
+  specialist: "Specialist",
+  financial: "Financial",
+};
 
 export default function DynamicCategoryPage({
   params,
@@ -231,16 +190,33 @@ export default function DynamicCategoryPage({
   const slug = resolvedParams.category;
 
   const categoryInfo = CATEGORY_MAP[slug] || CATEGORY_MAP.motor;
+  const propertyType = PROPERTY_TYPE_MAPPING[slug] || "Moto";
 
   // Sidebar Filter States
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>(
-    categoryInfo.subCategories[0]
-  );
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("recommended");
   const [selectedRating, setSelectedRating] = useState<string>("");
 
+  // Queries
+  const { data: subCategoriesData } = useGetSubCategoriesQuery();
+  const subCategories =
+    subCategoriesData?.data?.results?.filter(
+      (sub: SubCategoryData) => sub.property_type === propertyType
+    ) || [];
+
+  const { data: propertiesData, isLoading } = useGetPropertiesQuery({
+    property_type: propertyType,
+    ...(selectedSubCategory && { sub_category_id: selectedSubCategory }),
+    ...(sortBy && { sort_by: sortBy }),
+    ...(selectedRating === "4" && { rating_4_plus: true }),
+    ...(selectedRating === "4.5" && { rating_4_5_plus: true }),
+    ...(selectedRating === "5" && { rating_5: true }),
+  });
+
+  const properties = propertiesData?.data?.results || [];
+
   // Redirection states
-  const [redirectingBroker, setRedirectingBroker] = useState<typeof BROKERS_POOL[0] | null>(null);
+  const [redirectingBroker, setRedirectingBroker] = useState<{name: string, url: string} | null>(null);
   const [redirectProgress, setRedirectProgress] = useState<number>(0);
 
   // Simulate Redirection Progress bar
@@ -273,7 +249,7 @@ export default function DynamicCategoryPage({
   };
 
   const handleResetFilters = () => {
-    setSelectedSubCategory(categoryInfo.subCategories[0]);
+    setSelectedSubCategory("");
     setSortBy("recommended");
     setSelectedRating("");
   };
@@ -348,7 +324,21 @@ export default function DynamicCategoryPage({
                       Sub-Category
                     </label>
                     <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                      {categoryInfo.subCategories.map((sub, i) => (
+                      {subCategories.length > 0 ? subCategories.map((sub: SubCategoryData) => (
+                        <label
+                          key={sub.id}
+                          className="flex items-center gap-2 text-gray-600 hover:text-[#00d66d] cursor-pointer"
+                        >
+                          <input
+                            type="radio"
+                            name="subcategory"
+                            checked={selectedSubCategory === sub.id.toString()}
+                            onChange={() => setSelectedSubCategory(sub.id.toString())}
+                            className="w-3.5 h-3.5 accent-[#00d66d]"
+                          />
+                          <span className="text-[11px]">{sub.title}</span>
+                        </label>
+                      )) : categoryInfo.subCategories.map((sub, i) => (
                         <label
                           key={i}
                           className="flex items-center gap-2 text-gray-600 hover:text-[#00d66d] cursor-pointer"
@@ -356,8 +346,7 @@ export default function DynamicCategoryPage({
                           <input
                             type="radio"
                             name="subcategory"
-                            checked={selectedSubCategory === sub}
-                            onChange={() => setSelectedSubCategory(sub)}
+                            disabled
                             className="w-3.5 h-3.5 accent-[#00d66d]"
                           />
                           <span className="text-[11px]">{sub}</span>
@@ -374,8 +363,10 @@ export default function DynamicCategoryPage({
                     <div className="space-y-1.5">
                       {[
                         { label: "Recommended", value: "recommended" },
-                        { label: "Most Popular", value: "popular" },
-                        { label: "Recently Added", value: "recent" },
+                        { label: "Most Popular", value: "most_popular" },
+                        { label: "Recently Added", value: "recent_added" },
+                        { label: "Highest Rated", value: "highest_rated" },
+                        { label: "Low Fees", value: "low_fees" },
                       ].map((item) => (
                         <label
                           key={item.value}
@@ -440,70 +431,76 @@ export default function DynamicCategoryPage({
               {/* Header with Results Count */}
               <div className="flex justify-between items-center bg-white border border-gray-150 p-4 rounded-2xl shadow-sm">
                 <span className="text-xs text-gray-500 font-bold">
-                  Available Brokers ({BROKERS_POOL.length})
+                  Available Brokers ({properties.length})
                 </span>
 
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-gray-400 font-bold">Sort</span>
-                  <select className="bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 font-semibold text-[#0f265c] outline-none">
-                    <option>Highest Rated</option>
-                    <option>Low Fees</option>
+                  <select 
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 font-semibold text-[#0f265c] outline-none"
+                  >
+                    <option value="recommended">Recommended</option>
+                    <option value="highest_rated">Highest Rated</option>
+                    <option value="low_fees">Low Fees</option>
+                    <option value="most_popular">Most Popular</option>
+                    <option value="recent_added">Recently Added</option>
                   </select>
                 </div>
               </div>
 
               {/* Brokers List */}
               <div className="space-y-4">
-                {BROKERS_POOL.map((broker, idx) => (
+                {isLoading ? (
+                  <div className="text-center py-10 text-gray-500 font-bold">Loading properties...</div>
+                ) : properties.length === 0 ? (
+                  <div className="text-center py-10 text-gray-500 font-bold">No properties found.</div>
+                ) : properties.map((property: PropertyData, idx: number) => (
                   <div
                     key={idx}
                     className="bg-white border border-gray-150 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm hover:shadow-md transition-all duration-300"
                   >
                     {/* Logo area */}
-                    <div className="flex flex-col items-center justify-center border border-gray-100 rounded-xl p-4 w-full md:w-40 h-24 bg-gray-50 text-center">
-                      <div className={`px-3 py-1 rounded text-sm ${broker.logoBg}`}>
-                        {broker.name}
-                      </div>
-                      <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider mt-1">
-                        {broker.logoSub}
+                    <div className="flex flex-col items-center justify-center border border-gray-100 rounded-xl p-4 w-full md:w-40 h-24 bg-gray-50 text-center relative">
+                      {property.image ? (
+                        <Image
+                          src={property.image}
+                          alt={property.sub_category?.title || propertyType}
+                          fill
+                          className="object-contain p-2"
+                        />
+                      ) : (
+                        <div className="px-3 py-1 rounded text-sm bg-blue-900 text-white font-black italic">
+                          {property.sub_category?.title || propertyType}
+                        </div>
+                      )}
+                      <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider mt-1 z-10 absolute bottom-1">
+                        {property.property_type}
                       </span>
                     </div>
 
                     {/* Tags & info */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full text-left md:px-2">
-                      <div className="space-y-1">
-                        <span className="text-[9px] text-gray-400 font-black tracking-wider uppercase">
-                          INSURANCE OFFERED
-                        </span>
-                        <p className="text-xs font-semibold text-[#0f265c] leading-snug">
-                          {broker.offered}
-                        </p>
-                      </div>
-
-                      <div className="space-y-1">
-                        <span className="text-[9px] text-gray-400 font-black tracking-wider uppercase">
-                          SPECIAL OFFERS
-                        </span>
-                        <p className="text-xs font-semibold text-[#0f265c] leading-snug flex items-center">
-                          {broker.discountIcon}
-                          {broker.discount}
-                        </p>
-                      </div>
-
-                      <div className="space-y-1">
-                        <span className="text-[9px] text-gray-400 font-black tracking-wider uppercase">
-                          KEY BENEFIT
-                        </span>
-                        <p className="text-xs font-semibold text-[#0f265c] leading-snug">
-                          {broker.benefit}
-                        </p>
-                      </div>
+                      {(property.features || []).slice(0, 3).map((feature, fIdx) => (
+                        <div key={fIdx} className="space-y-1">
+                          <span className="text-[9px] text-gray-400 font-black tracking-wider uppercase">
+                            {feature.title}
+                          </span>
+                          <p className="text-xs font-semibold text-[#0f265c] leading-snug">
+                            {feature.description}
+                          </p>
+                        </div>
+                      ))}
                     </div>
 
                     {/* Action Button */}
                     <div className="w-full md:w-auto self-stretch md:self-center flex items-center">
                       <button
-                        onClick={() => setRedirectingBroker(broker)}
+                        onClick={() => setRedirectingBroker({
+                          name: property.sub_category?.title || propertyType,
+                          url: property.quote_link || "#"
+                        })}
                         className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-lg text-center transition-colors text-xs shadow-md shadow-blue-600/10 cursor-pointer"
                       >
                         Get Quotes &raquo;
